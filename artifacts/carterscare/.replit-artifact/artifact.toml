@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Carter's Care v3"
+version = "1.0.0"
+id = "artifacts/carterscare"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25269
+
+[services.development]
+run = "pnpm --filter @workspace/carterscare run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/carterscare", "run", "build" ]
+publicDir = "artifacts/carterscare/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25269"
+BASE_PATH = "/"

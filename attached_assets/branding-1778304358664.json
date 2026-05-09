@@ -1,0 +1,130 @@
+{
+  "colorScheme": "light",
+  "fonts": [
+    {
+      "family": "Plus Jakarta Sans",
+      "role": "body"
+    }
+  ],
+  "colors": {
+    "primary": "#94A3B8",
+    "secondary": "#64748B",
+    "accent": "#1E293B",
+    "background": "#F6F7F9",
+    "textPrimary": "#1E293B",
+    "link": "#1E293B"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Plus Jakarta Sans",
+      "heading": "Plus Jakarta Sans"
+    },
+    "fontStacks": {
+      "heading": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "body": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "paragraph": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ]
+    },
+    "fontSizes": {
+      "h1": "48px",
+      "h2": "24px",
+      "body": "16px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 4,
+    "borderRadius": "6px"
+  },
+  "components": {
+    "input": {
+      "background": "#F8FAFC",
+      "textColor": "#1E293B",
+      "borderColor": "#E2E8F0",
+      "borderRadius": "12px",
+      "borderRadiusCorners": {
+        "topLeft": "12px",
+        "topRight": "12px",
+        "bottomRight": "12px",
+        "bottomLeft": "12px"
+      },
+      "shadow": "none"
+    },
+    "buttonPrimary": {
+      "background": "#FFFFFF",
+      "textColor": "#FFFFFF",
+      "borderRadius": "12px",
+      "borderRadiusCorners": {
+        "topLeft": "12px",
+        "topRight": "12px",
+        "bottomRight": "12px",
+        "bottomLeft": "12px"
+      },
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 8px 24px 0px, rgba(0, 0, 0, 0.08) 0px 4px 8px -1px"
+    }
+  },
+  "images": {
+    "favicon": null,
+    "ogImage": "https://storage.googleapis.com/gpt-engineer-file-uploads/czT7wSdcL7QRmAwke3H39kjgc2m2/social-images/social-1772955418083-Carters-Logo.webp"
+  },
+  "__llm_logo_reasoning": {
+    "selectedIndex": -1,
+    "reasoning": "The only logo candidate is invisible and has a size of 0x0, making it unsuitable as a brand logo.",
+    "confidence": 0.2,
+    "rejected": true,
+    "source": "llm"
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": 0,
+      "text": "Sign In",
+      "reasoning": "The 'Sign In' button is the only button available and serves as the main call-to-action for users to access the platform."
+    },
+    "secondary": {
+      "index": -1,
+      "text": "N/A",
+      "reasoning": "There is no secondary button available on the page."
+    },
+    "confidence": 0.9
+  },
+  "personality": {
+    "tone": "professional",
+    "energy": "medium",
+    "targetAudience": "healthcare professionals"
+  },
+  "designSystem": {
+    "framework": "tailwind",
+    "componentLibrary": ""
+  },
+  "confidence": {
+    "buttons": 0.9,
+    "colors": 0.9,
+    "overall": 0.9
+  },
+  "__llm_metadata": {
+    "logoSelection": {
+      "llmCalled": true,
+      "llmSucceeded": true,
+      "finalSource": "llm",
+      "rawLogoSelection": {
+        "selectedLogoIndex": -1,
+        "selectedLogoReasoning": "The only logo candidate is invisible and has a size of 0x0, making it unsuitable as a brand logo.",
+        "confidence": 0.2
+      }
+    },
+    "buttonClassification": {
+      "llmCalled": true,
+      "llmSucceeded": true
+    }
+  }
+}

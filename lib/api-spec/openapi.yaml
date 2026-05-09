@@ -2,21 +2,47 @@ openapi: 3.1.0
 info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 3.0.0
+  description: Carter's Care v3 - NDIS & Aged Care Management Platform API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: participants
+    description: NDIS & Aged Care participants/clients
+  - name: staff
+    description: Staff management
+  - name: roster
+    description: Rostering & scheduling
+  - name: shifts
+    description: Shift management
+  - name: timesheets
+    description: Timesheets
+  - name: casenotes
+    description: Case notes & progress notes
+  - name: incidents
+    description: Incident management (mandatory reporting)
+  - name: compliance
+    description: Compliance & quality standards
+  - name: medications
+    description: Medication management
+  - name: serviceagreements
+    description: Service agreements & NDIS plans
+  - name: goals
+    description: Participant goals & outcomes
+  - name: dashboard
+    description: Dashboard summaries & analytics
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +50,1122 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # AUTH
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # DASHBOARD
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Dashboard overview metrics
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Recent activity feed
+      responses:
+        "200":
+          description: Recent activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  /dashboard/compliance-status:
+    get:
+      operationId: getComplianceStatus
+      tags: [dashboard]
+      summary: Compliance status overview
+      responses:
+        "200":
+          description: Compliance status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceOverview"
+
+  # PARTICIPANTS
+  /participants:
+    get:
+      operationId: getParticipants
+      tags: [participants]
+      summary: List participants
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: fundingType
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of participants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Participant"
+    post:
+      operationId: createParticipant
+      tags: [participants]
+      summary: Create participant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ParticipantInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Participant"
+
+  /participants/{id}:
+    get:
+      operationId: getParticipant
+      tags: [participants]
+      summary: Get participant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Participant detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Participant"
+    patch:
+      operationId: updateParticipant
+      tags: [participants]
+      summary: Update participant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ParticipantUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Participant"
+    delete:
+      operationId: deleteParticipant
+      tags: [participants]
+      summary: Delete participant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # STAFF
+  /staff:
+    get:
+      operationId: getStaff
+      tags: [staff]
+      summary: List staff members
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of staff
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StaffMember"
+    post:
+      operationId: createStaff
+      tags: [staff]
+      summary: Create staff member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StaffInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffMember"
+
+  /staff/{id}:
+    get:
+      operationId: getStaffMember
+      tags: [staff]
+      summary: Get staff member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Staff member detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffMember"
+    patch:
+      operationId: updateStaff
+      tags: [staff]
+      summary: Update staff member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StaffUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffMember"
+
+  /staff/{id}/compliance:
+    get:
+      operationId: getStaffCompliance
+      tags: [staff]
+      summary: Get staff compliance certifications
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Staff compliance info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffCompliance"
+
+  # ROSTER / SHIFTS
+  /shifts:
+    get:
+      operationId: getShifts
+      tags: [shifts]
+      summary: List shifts
+      parameters:
+        - name: startDate
+          in: query
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          schema:
+            type: string
+        - name: staffId
+          in: query
+          schema:
+            type: integer
+        - name: participantId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of shifts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Shift"
+    post:
+      operationId: createShift
+      tags: [shifts]
+      summary: Create shift
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShiftInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shift"
+
+  /shifts/{id}:
+    get:
+      operationId: getShift
+      tags: [shifts]
+      summary: Get shift
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Shift detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shift"
+    patch:
+      operationId: updateShift
+      tags: [shifts]
+      summary: Update shift
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShiftUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shift"
+    delete:
+      operationId: deleteShift
+      tags: [shifts]
+      summary: Delete shift
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /shifts/{id}/clock-in:
+    post:
+      operationId: clockInShift
+      tags: [shifts]
+      summary: Clock in for a shift
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Clocked in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shift"
+
+  /shifts/{id}/clock-out:
+    post:
+      operationId: clockOutShift
+      tags: [shifts]
+      summary: Clock out from a shift
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Clocked out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shift"
+
+  # TIMESHEETS
+  /timesheets:
+    get:
+      operationId: getTimesheets
+      tags: [timesheets]
+      summary: List timesheets
+      parameters:
+        - name: staffId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: weekStart
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of timesheets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Timesheet"
+    post:
+      operationId: createTimesheet
+      tags: [timesheets]
+      summary: Create timesheet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TimesheetInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Timesheet"
+
+  /timesheets/{id}:
+    get:
+      operationId: getTimesheet
+      tags: [timesheets]
+      summary: Get timesheet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Timesheet detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Timesheet"
+    patch:
+      operationId: updateTimesheet
+      tags: [timesheets]
+      summary: Update timesheet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TimesheetUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Timesheet"
+
+  /timesheets/{id}/approve:
+    post:
+      operationId: approveTimesheet
+      tags: [timesheets]
+      summary: Approve timesheet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Timesheet"
+
+  # CASE NOTES
+  /case-notes:
+    get:
+      operationId: getCaseNotes
+      tags: [casenotes]
+      summary: List case notes
+      parameters:
+        - name: participantId
+          in: query
+          schema:
+            type: integer
+        - name: staffId
+          in: query
+          schema:
+            type: integer
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of case notes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CaseNote"
+    post:
+      operationId: createCaseNote
+      tags: [casenotes]
+      summary: Create case note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CaseNoteInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseNote"
+
+  /case-notes/{id}:
+    get:
+      operationId: getCaseNote
+      tags: [casenotes]
+      summary: Get case note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Case note detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseNote"
+    patch:
+      operationId: updateCaseNote
+      tags: [casenotes]
+      summary: Update case note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CaseNoteUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseNote"
+    delete:
+      operationId: deleteCaseNote
+      tags: [casenotes]
+      summary: Delete case note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # INCIDENTS
+  /incidents:
+    get:
+      operationId: getIncidents
+      tags: [incidents]
+      summary: List incidents
+      parameters:
+        - name: participantId
+          in: query
+          schema:
+            type: integer
+        - name: severity
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: reportableToNDIS
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of incidents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Incident"
+    post:
+      operationId: createIncident
+      tags: [incidents]
+      summary: Create incident report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncidentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+
+  /incidents/{id}:
+    get:
+      operationId: getIncident
+      tags: [incidents]
+      summary: Get incident
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Incident detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+    patch:
+      operationId: updateIncident
+      tags: [incidents]
+      summary: Update incident
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncidentUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+
+  /incidents/{id}/submit-ndis:
+    post:
+      operationId: submitIncidentToNDIS
+      tags: [incidents]
+      summary: Mark incident as submitted to NDIS Commission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+
+  # MEDICATIONS
+  /medications:
+    get:
+      operationId: getMedications
+      tags: [medications]
+      summary: List medications for participants
+      parameters:
+        - name: participantId
+          in: query
+          schema:
+            type: integer
+        - name: active
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of medications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Medication"
+    post:
+      operationId: createMedication
+      tags: [medications]
+      summary: Add medication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MedicationInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Medication"
+
+  /medications/{id}:
+    get:
+      operationId: getMedication
+      tags: [medications]
+      summary: Get medication
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Medication detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Medication"
+    patch:
+      operationId: updateMedication
+      tags: [medications]
+      summary: Update medication
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MedicationUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Medication"
+
+  /medications/{id}/administer:
+    post:
+      operationId: administerMedication
+      tags: [medications]
+      summary: Record medication administration
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MedicationAdministrationInput"
+      responses:
+        "201":
+          description: Administration recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MedicationAdministration"
+
+  # SERVICE AGREEMENTS
+  /service-agreements:
+    get:
+      operationId: getServiceAgreements
+      tags: [serviceagreements]
+      summary: List service agreements
+      parameters:
+        - name: participantId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of service agreements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ServiceAgreement"
+    post:
+      operationId: createServiceAgreement
+      tags: [serviceagreements]
+      summary: Create service agreement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceAgreementInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceAgreement"
+
+  /service-agreements/{id}:
+    get:
+      operationId: getServiceAgreement
+      tags: [serviceagreements]
+      summary: Get service agreement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Service agreement detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceAgreement"
+    patch:
+      operationId: updateServiceAgreement
+      tags: [serviceagreements]
+      summary: Update service agreement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceAgreementUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceAgreement"
+
+  # GOALS
+  /goals:
+    get:
+      operationId: getGoals
+      tags: [goals]
+      summary: List participant goals
+      parameters:
+        - name: participantId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of goals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Goal"
+    post:
+      operationId: createGoal
+      tags: [goals]
+      summary: Create goal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GoalInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+
+  /goals/{id}:
+    get:
+      operationId: getGoal
+      tags: [goals]
+      summary: Get goal
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Goal detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+    patch:
+      operationId: updateGoal
+      tags: [goals]
+      summary: Update goal
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GoalUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+
+  # COMPLIANCE
+  /compliance/checks:
+    get:
+      operationId: getComplianceChecks
+      tags: [compliance]
+      summary: List compliance check items
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of compliance checks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ComplianceCheck"
+    post:
+      operationId: createComplianceCheck
+      tags: [compliance]
+      summary: Create compliance check
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceCheckInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceCheck"
+
+  /compliance/checks/{id}:
+    patch:
+      operationId: updateComplianceCheck
+      tags: [compliance]
+      summary: Update compliance check
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceCheckUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceCheck"
+
+  /compliance/expiring:
+    get:
+      operationId: getExpiringCompliance
+      tags: [compliance]
+      summary: Get expiring certifications and compliance items
+      responses:
+        "200":
+          description: Expiring compliance items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ExpiringComplianceItem"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +1176,1074 @@ components:
       required:
         - status
 
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [user, token]
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+
+    User:
+      type: object
+      required: [id, email, name, role]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, coordinator, support_worker, viewer]
+        organisation:
+          type: ["string", "null"]
+        avatarUrl:
+          type: ["string", "null"]
+
+    DashboardSummary:
+      type: object
+      required: [totalParticipants, activeShiftsToday, openIncidents, pendingTimesheets, complianceScore, upcomingShifts, recentIncidents]
+      properties:
+        totalParticipants:
+          type: integer
+        activeShiftsToday:
+          type: integer
+        openIncidents:
+          type: integer
+        pendingTimesheets:
+          type: integer
+        complianceScore:
+          type: number
+        upcomingShifts:
+          type: integer
+        staffOnDuty:
+          type: integer
+        ndisParticipants:
+          type: integer
+        agedCareParticipants:
+          type: integer
+        recentIncidents:
+          type: integer
+        expiringCertifications:
+          type: integer
+        budgetUtilisation:
+          type: number
+
+    ActivityItem:
+      type: object
+      required: [id, type, description, timestamp, userId]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [shift_started, shift_completed, incident_reported, case_note_added, timesheet_submitted, compliance_updated, medication_administered]
+        description:
+          type: string
+        timestamp:
+          type: string
+        userId:
+          type: integer
+        userName:
+          type: string
+        participantId:
+          type: ["integer", "null"]
+        participantName:
+          type: ["string", "null"]
+
+    ComplianceOverview:
+      type: object
+      required: [overallScore, ndisStandards, agedCareStandards, staffCertifications, expiringItems]
+      properties:
+        overallScore:
+          type: number
+        ndisStandards:
+          type: array
+          items:
+            $ref: "#/components/schemas/StandardStatus"
+        agedCareStandards:
+          type: array
+          items:
+            $ref: "#/components/schemas/StandardStatus"
+        staffCertifications:
+          $ref: "#/components/schemas/CertificationSummary"
+        expiringItems:
+          type: integer
+
+    StandardStatus:
+      type: object
+      required: [name, status, score]
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum: [compliant, partial, non_compliant, not_assessed]
+        score:
+          type: number
+        lastReviewed:
+          type: ["string", "null"]
+
+    CertificationSummary:
+      type: object
+      required: [total, current, expiring, expired]
+      properties:
+        total:
+          type: integer
+        current:
+          type: integer
+        expiring:
+          type: integer
+        expired:
+          type: integer
+
+    Participant:
+      type: object
+      required: [id, firstName, lastName, dateOfBirth, fundingType, status, createdAt]
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        preferredName:
+          type: ["string", "null"]
+        dateOfBirth:
+          type: string
+        gender:
+          type: ["string", "null"]
+        fundingType:
+          type: string
+          enum: [ndis, aged_care_commonwealth, aged_care_state, private, mixed]
+        ndisNumber:
+          type: ["string", "null"]
+        agedCareId:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [active, inactive, waitlist, discharged]
+        address:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        emergencyContactName:
+          type: ["string", "null"]
+        emergencyContactPhone:
+          type: ["string", "null"]
+        primaryDiagnosis:
+          type: ["string", "null"]
+        supportLevel:
+          type: ["string", "null"]
+        assignedCoordinatorId:
+          type: ["integer", "null"]
+        ndisGoals:
+          type: ["string", "null"]
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+        createdAt:
+          type: string
+        updatedAt:
+          type: ["string", "null"]
+
+    ParticipantInput:
+      type: object
+      required: [firstName, lastName, dateOfBirth, fundingType]
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        preferredName:
+          type: ["string", "null"]
+        dateOfBirth:
+          type: string
+        gender:
+          type: ["string", "null"]
+        fundingType:
+          type: string
+          enum: [ndis, aged_care_commonwealth, aged_care_state, private, mixed]
+        ndisNumber:
+          type: ["string", "null"]
+        agedCareId:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        emergencyContactName:
+          type: ["string", "null"]
+        emergencyContactPhone:
+          type: ["string", "null"]
+        primaryDiagnosis:
+          type: ["string", "null"]
+        supportLevel:
+          type: ["string", "null"]
+        assignedCoordinatorId:
+          type: ["integer", "null"]
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+
+    ParticipantUpdate:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        preferredName:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [active, inactive, waitlist, discharged]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        emergencyContactName:
+          type: ["string", "null"]
+        emergencyContactPhone:
+          type: ["string", "null"]
+        supportLevel:
+          type: ["string", "null"]
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+        ndisGoals:
+          type: ["string", "null"]
+        assignedCoordinatorId:
+          type: ["integer", "null"]
+
+    StaffMember:
+      type: object
+      required: [id, firstName, lastName, email, role, status, createdAt]
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        role:
+          type: string
+          enum: [support_worker, coordinator, nurse, team_leader, admin, manager]
+        status:
+          type: string
+          enum: [active, inactive, on_leave]
+        wwccNumber:
+          type: ["string", "null"]
+        wwccExpiry:
+          type: ["string", "null"]
+        ndisWorkerScreeningId:
+          type: ["string", "null"]
+        ndisWorkerScreeningExpiry:
+          type: ["string", "null"]
+        firstAidExpiry:
+          type: ["string", "null"]
+        cprExpiry:
+          type: ["string", "null"]
+        qualifications:
+          type: ["string", "null"]
+        awardClassification:
+          type: ["string", "null"]
+        employmentType:
+          type: string
+          enum: [full_time, part_time, casual, contractor]
+        createdAt:
+          type: string
+
+    StaffInput:
+      type: object
+      required: [firstName, lastName, email, role, employmentType]
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        role:
+          type: string
+          enum: [support_worker, coordinator, nurse, team_leader, admin, manager]
+        employmentType:
+          type: string
+          enum: [full_time, part_time, casual, contractor]
+        wwccNumber:
+          type: ["string", "null"]
+        wwccExpiry:
+          type: ["string", "null"]
+        ndisWorkerScreeningId:
+          type: ["string", "null"]
+        ndisWorkerScreeningExpiry:
+          type: ["string", "null"]
+        firstAidExpiry:
+          type: ["string", "null"]
+        cprExpiry:
+          type: ["string", "null"]
+        qualifications:
+          type: ["string", "null"]
+        awardClassification:
+          type: ["string", "null"]
+
+    StaffUpdate:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: ["string", "null"]
+        role:
+          type: string
+          enum: [support_worker, coordinator, nurse, team_leader, admin, manager]
+        status:
+          type: string
+          enum: [active, inactive, on_leave]
+        wwccNumber:
+          type: ["string", "null"]
+        wwccExpiry:
+          type: ["string", "null"]
+        ndisWorkerScreeningId:
+          type: ["string", "null"]
+        ndisWorkerScreeningExpiry:
+          type: ["string", "null"]
+        firstAidExpiry:
+          type: ["string", "null"]
+        cprExpiry:
+          type: ["string", "null"]
+        awardClassification:
+          type: ["string", "null"]
+
+    StaffCompliance:
+      type: object
+      required: [staffId, certifications]
+      properties:
+        staffId:
+          type: integer
+        certifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/CertificationItem"
+        overallStatus:
+          type: string
+          enum: [compliant, expiring_soon, expired, incomplete]
+
+    CertificationItem:
+      type: object
+      required: [name, status]
+      properties:
+        name:
+          type: string
+        number:
+          type: ["string", "null"]
+        expiryDate:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [current, expiring_soon, expired, not_provided]
+
+    Shift:
+      type: object
+      required: [id, participantId, staffId, startTime, endTime, status, serviceType, createdAt]
+      properties:
+        id:
+          type: integer
+        participantId:
+          type: integer
+        participantName:
+          type: ["string", "null"]
+        staffId:
+          type: integer
+        staffName:
+          type: ["string", "null"]
+        startTime:
+          type: string
+        endTime:
+          type: string
+        actualStartTime:
+          type: ["string", "null"]
+        actualEndTime:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [scheduled, confirmed, in_progress, completed, cancelled, no_show]
+        serviceType:
+          type: string
+          enum: [daily_activities, community_participation, personal_care, domestic_assistance, transport, therapy_support, high_intensity_support, respite, nursing_care]
+        ndisLineItem:
+          type: ["string", "null"]
+        location:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        requiresTwoWorkers:
+          type: boolean
+        createdAt:
+          type: string
+
+    ShiftInput:
+      type: object
+      required: [participantId, staffId, startTime, endTime, serviceType]
+      properties:
+        participantId:
+          type: integer
+        staffId:
+          type: integer
+        startTime:
+          type: string
+        endTime:
+          type: string
+        serviceType:
+          type: string
+          enum: [daily_activities, community_participation, personal_care, domestic_assistance, transport, therapy_support, high_intensity_support, respite, nursing_care]
+        ndisLineItem:
+          type: ["string", "null"]
+        location:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        requiresTwoWorkers:
+          type: boolean
+
+    ShiftUpdate:
+      type: object
+      properties:
+        startTime:
+          type: string
+        endTime:
+          type: string
+        status:
+          type: string
+          enum: [scheduled, confirmed, in_progress, completed, cancelled, no_show]
+        serviceType:
+          type: string
+          enum: [daily_activities, community_participation, personal_care, domestic_assistance, transport, therapy_support, high_intensity_support, respite, nursing_care]
+        location:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        ndisLineItem:
+          type: ["string", "null"]
+
+    Timesheet:
+      type: object
+      required: [id, staffId, weekStart, weekEnd, totalHours, status, createdAt]
+      properties:
+        id:
+          type: integer
+        staffId:
+          type: integer
+        staffName:
+          type: ["string", "null"]
+        weekStart:
+          type: string
+        weekEnd:
+          type: string
+        totalHours:
+          type: number
+        regularHours:
+          type: number
+        overtimeHours:
+          type: number
+        allowances:
+          type: number
+        status:
+          type: string
+          enum: [draft, submitted, approved, rejected, paid]
+        approvedById:
+          type: ["integer", "null"]
+        approvedAt:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    TimesheetInput:
+      type: object
+      required: [staffId, weekStart, weekEnd]
+      properties:
+        staffId:
+          type: integer
+        weekStart:
+          type: string
+        weekEnd:
+          type: string
+        notes:
+          type: ["string", "null"]
+
+    TimesheetUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [draft, submitted, approved, rejected, paid]
+        notes:
+          type: ["string", "null"]
+
+    CaseNote:
+      type: object
+      required: [id, participantId, staffId, category, content, createdAt]
+      properties:
+        id:
+          type: integer
+        participantId:
+          type: integer
+        participantName:
+          type: ["string", "null"]
+        staffId:
+          type: integer
+        staffName:
+          type: ["string", "null"]
+        shiftId:
+          type: ["integer", "null"]
+        category:
+          type: string
+          enum: [progress_note, goal_update, behaviour_support, health_update, personal_care, community_participation, communication, incident_follow_up, medication, daily_living]
+        content:
+          type: string
+        goalId:
+          type: ["integer", "null"]
+        isConfidential:
+          type: boolean
+        requiresFollowUp:
+          type: boolean
+        followUpDate:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: ["string", "null"]
+
+    CaseNoteInput:
+      type: object
+      required: [participantId, category, content]
+      properties:
+        participantId:
+          type: integer
+        shiftId:
+          type: ["integer", "null"]
+        category:
+          type: string
+          enum: [progress_note, goal_update, behaviour_support, health_update, personal_care, community_participation, communication, incident_follow_up, medication, daily_living]
+        content:
+          type: string
+        goalId:
+          type: ["integer", "null"]
+        isConfidential:
+          type: boolean
+        requiresFollowUp:
+          type: boolean
+        followUpDate:
+          type: ["string", "null"]
+
+    CaseNoteUpdate:
+      type: object
+      properties:
+        content:
+          type: string
+        category:
+          type: string
+          enum: [progress_note, goal_update, behaviour_support, health_update, personal_care, community_participation, communication, incident_follow_up, medication, daily_living]
+        requiresFollowUp:
+          type: boolean
+        followUpDate:
+          type: ["string", "null"]
+
+    Incident:
+      type: object
+      required: [id, participantId, reportedById, incidentDate, type, severity, description, status, createdAt]
+      properties:
+        id:
+          type: integer
+        participantId:
+          type: integer
+        participantName:
+          type: ["string", "null"]
+        reportedById:
+          type: integer
+        reportedByName:
+          type: ["string", "null"]
+        incidentDate:
+          type: string
+        incidentTime:
+          type: ["string", "null"]
+        location:
+          type: ["string", "null"]
+        type:
+          type: string
+          enum: [injury, medication_error, behaviour_incident, complaint, near_miss, property_damage, missing_person, abuse_neglect, restrictive_practice, financial_abuse, environmental_hazard, other]
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+        description:
+          type: string
+        immediateActions:
+          type: ["string", "null"]
+        witnesses:
+          type: ["string", "null"]
+        reportableToNDIS:
+          type: boolean
+        reportableToAgedCare:
+          type: boolean
+        ndisSubmissionDate:
+          type: ["string", "null"]
+        agedCareSubmissionDate:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [open, under_investigation, awaiting_submission, submitted, closed]
+        resolution:
+          type: ["string", "null"]
+        preventiveMeasures:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: ["string", "null"]
+
+    IncidentInput:
+      type: object
+      required: [participantId, incidentDate, type, severity, description]
+      properties:
+        participantId:
+          type: integer
+        incidentDate:
+          type: string
+        incidentTime:
+          type: ["string", "null"]
+        location:
+          type: ["string", "null"]
+        type:
+          type: string
+          enum: [injury, medication_error, behaviour_incident, complaint, near_miss, property_damage, missing_person, abuse_neglect, restrictive_practice, financial_abuse, environmental_hazard, other]
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+        description:
+          type: string
+        immediateActions:
+          type: ["string", "null"]
+        witnesses:
+          type: ["string", "null"]
+        reportableToNDIS:
+          type: boolean
+        reportableToAgedCare:
+          type: boolean
+
+    IncidentUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [open, under_investigation, awaiting_submission, submitted, closed]
+        resolution:
+          type: ["string", "null"]
+        preventiveMeasures:
+          type: ["string", "null"]
+        ndisSubmissionDate:
+          type: ["string", "null"]
+        agedCareSubmissionDate:
+          type: ["string", "null"]
+        reportableToNDIS:
+          type: boolean
+        reportableToAgedCare:
+          type: boolean
+
+    Medication:
+      type: object
+      required: [id, participantId, name, dosage, frequency, prescriber, startDate, isActive, createdAt]
+      properties:
+        id:
+          type: integer
+        participantId:
+          type: integer
+        participantName:
+          type: ["string", "null"]
+        name:
+          type: string
+        genericName:
+          type: ["string", "null"]
+        dosage:
+          type: string
+        unit:
+          type: ["string", "null"]
+        frequency:
+          type: string
+        route:
+          type: string
+          enum: [oral, topical, injection, inhaled, sublingual, rectal, other]
+        prescriber:
+          type: string
+        prescriberPhone:
+          type: ["string", "null"]
+        startDate:
+          type: string
+        endDate:
+          type: ["string", "null"]
+        instructions:
+          type: ["string", "null"]
+        sideEffects:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        requiresWitness:
+          type: boolean
+        createdAt:
+          type: string
+
+    MedicationInput:
+      type: object
+      required: [participantId, name, dosage, frequency, prescriber, startDate, route]
+      properties:
+        participantId:
+          type: integer
+        name:
+          type: string
+        genericName:
+          type: ["string", "null"]
+        dosage:
+          type: string
+        unit:
+          type: ["string", "null"]
+        frequency:
+          type: string
+        route:
+          type: string
+          enum: [oral, topical, injection, inhaled, sublingual, rectal, other]
+        prescriber:
+          type: string
+        prescriberPhone:
+          type: ["string", "null"]
+        startDate:
+          type: string
+        endDate:
+          type: ["string", "null"]
+        instructions:
+          type: ["string", "null"]
+        sideEffects:
+          type: ["string", "null"]
+        requiresWitness:
+          type: boolean
+
+    MedicationUpdate:
+      type: object
+      properties:
+        dosage:
+          type: string
+        frequency:
+          type: string
+        instructions:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        prescriber:
+          type: string
+
+    MedicationAdministrationInput:
+      type: object
+      required: [administeredAt, outcome]
+      properties:
+        administeredAt:
+          type: string
+        outcome:
+          type: string
+          enum: [given, refused, not_available, missed]
+        witnessId:
+          type: ["integer", "null"]
+        notes:
+          type: ["string", "null"]
+
+    MedicationAdministration:
+      type: object
+      required: [id, medicationId, administeredById, administeredAt, outcome, createdAt]
+      properties:
+        id:
+          type: integer
+        medicationId:
+          type: integer
+        administeredById:
+          type: integer
+        administeredByName:
+          type: ["string", "null"]
+        administeredAt:
+          type: string
+        outcome:
+          type: string
+          enum: [given, refused, not_available, missed]
+        witnessId:
+          type: ["integer", "null"]
+        witnessName:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    ServiceAgreement:
+      type: object
+      required: [id, participantId, startDate, endDate, fundingType, status, totalBudget, createdAt]
+      properties:
+        id:
+          type: integer
+        participantId:
+          type: integer
+        participantName:
+          type: ["string", "null"]
+        startDate:
+          type: string
+        endDate:
+          type: string
+        fundingType:
+          type: string
+          enum: [ndis, aged_care, private]
+        ndisPlanNumber:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [draft, active, expired, cancelled]
+        totalBudget:
+          type: number
+        spentBudget:
+          type: number
+        remainingBudget:
+          type: number
+        supportCategories:
+          type: ["string", "null"]
+        reviewDate:
+          type: ["string", "null"]
+        signedByParticipant:
+          type: boolean
+        signedDate:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    ServiceAgreementInput:
+      type: object
+      required: [participantId, startDate, endDate, fundingType, totalBudget]
+      properties:
+        participantId:
+          type: integer
+        startDate:
+          type: string
+        endDate:
+          type: string
+        fundingType:
+          type: string
+          enum: [ndis, aged_care, private]
+        ndisPlanNumber:
+          type: ["string", "null"]
+        totalBudget:
+          type: number
+        supportCategories:
+          type: ["string", "null"]
+        reviewDate:
+          type: ["string", "null"]
+
+    ServiceAgreementUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [draft, active, expired, cancelled]
+        endDate:
+          type: string
+        totalBudget:
+          type: number
+        spentBudget:
+          type: number
+        reviewDate:
+          type: ["string", "null"]
+        signedByParticipant:
+          type: boolean
+        signedDate:
+          type: ["string", "null"]
+
+    Goal:
+      type: object
+      required: [id, participantId, title, category, status, targetDate, createdAt]
+      properties:
+        id:
+          type: integer
+        participantId:
+          type: integer
+        participantName:
+          type: ["string", "null"]
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        category:
+          type: string
+          enum: [independence, community_participation, health_wellbeing, relationships, employment_education, communication, daily_living, safety, other]
+        status:
+          type: string
+          enum: [active, achieved, on_hold, discontinued]
+        progress:
+          type: integer
+        targetDate:
+          type: string
+        ndisAligned:
+          type: boolean
+        strategies:
+          type: ["string", "null"]
+        measurableOutcomes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: ["string", "null"]
+
+    GoalInput:
+      type: object
+      required: [participantId, title, category, targetDate]
+      properties:
+        participantId:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        category:
+          type: string
+          enum: [independence, community_participation, health_wellbeing, relationships, employment_education, communication, daily_living, safety, other]
+        targetDate:
+          type: string
+        ndisAligned:
+          type: boolean
+        strategies:
+          type: ["string", "null"]
+        measurableOutcomes:
+          type: ["string", "null"]
+
+    GoalUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [active, achieved, on_hold, discontinued]
+        progress:
+          type: integer
+        strategies:
+          type: ["string", "null"]
+        measurableOutcomes:
+          type: ["string", "null"]
+
+    ComplianceCheck:
+      type: object
+      required: [id, title, category, framework, status, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        category:
+          type: string
+          enum: [ndis_practice_standard, aged_care_quality_standard, worker_screening, training, policy, documentation, audit]
+        framework:
+          type: string
+          enum: [ndis, aged_care, both]
+        status:
+          type: string
+          enum: [compliant, non_compliant, under_review, not_applicable]
+        dueDate:
+          type: ["string", "null"]
+        completedDate:
+          type: ["string", "null"]
+        assignedToId:
+          type: ["integer", "null"]
+        evidence:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    ComplianceCheckInput:
+      type: object
+      required: [title, category, framework]
+      properties:
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        category:
+          type: string
+          enum: [ndis_practice_standard, aged_care_quality_standard, worker_screening, training, policy, documentation, audit]
+        framework:
+          type: string
+          enum: [ndis, aged_care, both]
+        dueDate:
+          type: ["string", "null"]
+        assignedToId:
+          type: ["integer", "null"]
+
+    ComplianceCheckUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [compliant, non_compliant, under_review, not_applicable]
+        completedDate:
+          type: ["string", "null"]
+        evidence:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    ExpiringComplianceItem:
+      type: object
+      required: [id, type, name, expiryDate, daysUntilExpiry, entityName, entityType]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [wwcc, ndis_worker_screening, first_aid, cpr, service_agreement, ndis_plan, certification]
+        name:
+          type: string
+        expiryDate:
+          type: string
+        daysUntilExpiry:
+          type: integer
+        entityName:
+          type: string
+        entityType:
+          type: string
+          enum: [staff, participant, agreement]
