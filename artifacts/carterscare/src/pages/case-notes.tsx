@@ -1,4 +1,4 @@
-import { useGetCaseNotes, getGetCaseNotesQueryKey } from "@workspace/api-client-react";
+import { useGetCaseNotes } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,9 +16,9 @@ const categoryColor: Record<string, string> = {
 };
 
 export default function CaseNotes() {
-  const { data: notes, isLoading } = useGetCaseNotes({
-    query: { queryKey: getGetCaseNotesQueryKey() },
-  });
+  const { data: notes, isLoading } = useGetCaseNotes();
+
+  
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-5 py-6 md:px-8 md:py-8">

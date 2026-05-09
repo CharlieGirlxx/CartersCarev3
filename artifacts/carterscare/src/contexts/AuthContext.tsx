@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@workspace/api-client-react";
-import { customFetch } from "@workspace/api-client-react/src/custom-fetch";
+
 
 interface AuthContextType {
   token: string | null;
