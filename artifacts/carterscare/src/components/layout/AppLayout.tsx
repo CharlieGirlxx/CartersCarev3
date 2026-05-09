@@ -1,21 +1,6 @@
-import React from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
-import { 
-  LayoutDashboard, 
-  Users, 
-  Calendar, 
-  UserSquare2, 
-  Clock, 
-  FileText, 
-  AlertTriangle, 
-  Pill, 
-  ShieldCheck, 
-  FileSignature, 
-  Target,
-  LogOut,
-  Menu
-} from "lucide-react";
+import { LayoutDashboard, Users, Calendar, UserSquare2, Clock, FileText, AlertTriangle, Pill, ShieldCheck, FileSignature, Target, LogOut, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -34,104 +19,90 @@ const navItems = [
   { href: "/goals", label: "Goals", icon: Target },
 ];
 
+function BrandMark() {
+  return (
+    <div className="relative h-10 w-10 rounded-2xl bg-white shadow-[0_8px_20px_rgba(15,23,42,0.12)] ring-1 ring-slate-200/80">
+      <div className="absolute inset-2 rounded-full bg-[conic-gradient(from_180deg,#f97316,#ef4444,#8b5cf6,#0ea5e9,#22c55e,#f59e0b,#f97316)] blur-[1px]" />
+      <div className="absolute inset-[14px] rounded-full bg-white" />
+    </div>
+  );
+}
+
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { user, logout } = useAuth();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const NavContent = () => (
-    <div className="flex flex-col h-full">
-      <div className="p-4 md:p-6 flex items-center gap-3">
-        <div className="w-8 h-8 relative flex items-center justify-center shrink-0">
-          <svg viewBox="0 0 100 100" className="w-full h-full">
-            <path d="M50 50 L50 10 A20 20 0 0 1 70 30 Z" fill="hsl(var(--chart-1))" />
-            <path d="M50 50 L90 50 A20 20 0 0 1 70 70 Z" fill="hsl(var(--chart-2))" />
-            <path d="M50 50 L50 90 A20 20 0 0 1 30 70 Z" fill="hsl(var(--chart-3))" />
-            <path d="M50 50 L10 50 A20 20 0 0 1 30 30 Z" fill="hsl(var(--chart-4))" />
-          </svg>
-          <div className="absolute w-2 h-2 bg-background rounded-full z-10" />
-        </div>
-        <div>
-          <h2 className="font-bold text-lg leading-tight tracking-tight">Carter's Care</h2>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Management Platform</p>
-        </div>
-      </div>
-
-      <div className="px-4 py-2 flex-1 overflow-y-auto no-scrollbar space-y-1">
-        {navItems.map((item) => {
-          const isActive = location.startsWith(item.href);
-          return (
-            <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
-              <div className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors cursor-pointer ${
-                isActive 
-                  ? "bg-primary text-primary-foreground font-medium" 
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}>
-                <item.icon className="w-5 h-5 shrink-0" />
-                <span className="text-sm">{item.label}</span>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-
-      <div className="p-4 mt-auto border-t border-border">
-        <div className="flex items-center gap-3 mb-4">
-          <Avatar>
-            <AvatarImage src={user?.avatarUrl || undefined} />
-            <AvatarFallback className="bg-primary/10 text-primary">
-              {user?.name?.substring(0, 2).toUpperCase() || 'U'}
-            </AvatarFallback>
-          </Avatar>
-          <div className="overflow-hidden">
-            <p className="text-sm font-medium truncate">{user?.name}</p>
-            <p className="text-xs text-muted-foreground capitalize truncate">{user?.role?.replace('_', ' ')}</p>
+  function NavContent() {
+    return (
+      <div className="flex h-full flex-col bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(248,250,252,0.92))] backdrop-blur-xl">
+        <div className="p-6">
+          <div className="flex items-center gap-3">
+            <BrandMark />
+            <div>
+              <h2 className="text-xl font-semibold tracking-tight text-slate-900">Carter's</h2>
+              <p className="-mt-1 text-xl font-semibold tracking-tight text-violet-600">Care</p>
+            </div>
           </div>
         </div>
-        <Button variant="outline" className="w-full justify-start text-muted-foreground" onClick={logout}>
-          <LogOut className="w-4 h-4 mr-2" />
-          Sign Out
-        </Button>
+        <div className="px-4 pb-4 flex-1 space-y-1 overflow-y-auto">
+          {navItems.map((item) => {
+            const isActive = location.startsWith(item.href);
+            return (
+              <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
+                <div className={`flex items-center gap-3 rounded-full px-4 py-2.5 text-sm transition-all ${isActive ? "bg-white shadow-[0_8px_24px_rgba(15,23,42,0.08)] text-slate-900" : "text-slate-500 hover:bg-white/70 hover:text-slate-900"}`}>
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+        <div className="border-t border-white/70 p-4">
+          <div className="mb-4 flex items-center gap-3 rounded-2xl bg-white/70 p-3 shadow-sm ring-1 ring-slate-200/70">
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={user?.avatarUrl || undefined} />
+              <AvatarFallback className="bg-violet-100 text-violet-700">{user?.name?.substring(0, 2).toUpperCase() || "U"}</AvatarFallback>
+            </Avatar>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-slate-900">{user?.name}</p>
+              <p className="truncate text-xs text-slate-500 capitalize">{user?.role?.replace("_", " ")}</p>
+            </div>
+          </div>
+          <Button variant="outline" className="h-11 w-full justify-start rounded-full border-slate-200 bg-white/70 text-slate-600 shadow-sm hover:bg-white" onClick={logout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Sign Out
+          </Button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row">
-      {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#f5f3ff_0%,#eff6ff_35%,#f8fafc_72%)] text-slate-900">
+      <div className="md:hidden flex items-center justify-between border-b border-white/70 bg-white/70 px-4 py-3 backdrop-blur-xl">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 relative flex items-center justify-center">
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              <path d="M50 50 L50 10 A20 20 0 0 1 70 30 Z" fill="hsl(var(--chart-1))" />
-              <path d="M50 50 L90 50 A20 20 0 0 1 70 70 Z" fill="hsl(var(--chart-2))" />
-              <path d="M50 50 L50 90 A20 20 0 0 1 30 70 Z" fill="hsl(var(--chart-3))" />
-              <path d="M50 50 L10 50 A20 20 0 0 1 30 30 Z" fill="hsl(var(--chart-4))" />
-            </svg>
+          <BrandMark />
+          <div>
+            <div className="text-sm font-semibold">Carter's Care</div>
+            <div className="text-[11px] text-slate-500">Management Platform</div>
           </div>
-          <span className="font-bold">Carter's Care</span>
         </div>
         <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Menu className="w-5 h-5" />
-            </Button>
+            <Button variant="ghost" size="icon" className="rounded-full"><Menu className="h-5 w-5" /></Button>
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-64">
+          <SheetContent side="left" className="w-72 p-0">
             <NavContent />
           </SheetContent>
         </Sheet>
       </div>
-
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:block w-64 border-r border-border bg-card/50 shrink-0 sticky top-0 h-screen overflow-hidden">
-        <NavContent />
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-x-hidden min-h-0 bg-background">
-        {children}
-      </main>
+      <div className="flex min-h-screen">
+        <aside className="sticky top-0 hidden h-screen w-[280px] shrink-0 border-r border-white/70 bg-white/45 shadow-[0_20px_80px_rgba(15,23,42,0.06)] backdrop-blur-xl md:block">
+          <NavContent />
+        </aside>
+        <main className="min-w-0 flex-1">{children}</main>
+      </div>
     </div>
   );
 }
