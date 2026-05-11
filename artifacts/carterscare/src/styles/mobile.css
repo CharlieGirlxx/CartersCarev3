@@ -1,0 +1,247 @@
+/* Phase 6: Mobile-First Optimization & Touch Targets */
+
+/* Ensure minimum tap target size (WCAG 2.5.5) */
+.touch-target,
+button,
+a[role="button"],
+input[type="checkbox"],
+input[type="radio"],
+[role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile-friendly form inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+textarea,
+select {
+  font-size: 16px; /* Prevents auto-zoom on iOS */
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* Sticky footer for mobile quick actions */
+@media (max-width: 768px) {
+  .sticky-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    padding: 12px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 40;
+    safe-area-inset-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  /* Add padding to body to account for sticky footer */
+  body.has-sticky-footer {
+    padding-bottom: 72px;
+  }
+}
+
+/* Large tap targets for primary mobile actions */
+.btn-primary-mobile {
+  min-height: 56px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 12px 24px;
+}
+
+/* Horizontal scrolling for mobile tabs */
+.tabs-scroll-mobile {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS */
+  scroll-behavior: smooth;
+}
+
+/* Remove tap highlight on mobile */
+@media (pointer: coarse) {
+  button,
+  a,
+  input,
+  textarea,
+  select {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Full-width modals on mobile */
+@media (max-width: 640px) {
+  .modal-mobile-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    max-width: none;
+  }
+}
+
+/* Optimize spacing for mobile readability */
+@media (max-width: 768px) {
+  .card {
+    margin: 8px 0;
+    padding: 16px;
+  }
+
+  .page-padding {
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+}
+
+/* Prevent double tap zoom on mobile */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"] {
+  font-size: 16px;
+}
+
+/* Safe area support for notched devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}
+
+/* Virtual keyboard adjustment */
+@media (max-height: 600px) and (orientation: landscape) {
+  .header-mobile {
+    height: 48px;
+  }
+
+  .tabs-container {
+    max-height: 40px;
+  }
+}
+
+/* Touch-friendly spacing */
+.touch-spacing {
+  margin: 8px;
+  padding: 8px;
+}
+
+/* Reduce animation on devices that prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Optimize font rendering for mobile */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Quick action button styles */
+.quick-action-btn {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 200ms ease;
+}
+
+.quick-action-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Floating action bar for mobile */
+.floating-action-bar {
+  position: fixed;
+  bottom: env(safe-area-inset-bottom, 16px);
+  right: 16px;
+  display: flex;
+  gap: 12px;
+  z-index: 50;
+}
+
+@media (max-width: 768px) {
+  .floating-action-bar {
+    bottom: calc(env(safe-area-inset-bottom, 16px) + 8px);
+    right: 8px;
+    flex-direction: column-reverse;
+  }
+}
+
+/* Performance: Use will-change sparingly */
+.will-scroll {
+  will-change: transform;
+}
+
+/* Gesture hints for users */
+.swipe-hint::after {
+  content: '↔';
+  display: block;
+  color: #9ca3af;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* Loading state for slow connections */
+.skeleton-loading {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Ensure readability in landscape mode */
+@media (max-height: 500px) {
+  .page-title {
+    margin: 8px 0;
+  }
+
+  .page-padding {
+    padding: 8px;
+  }
+}

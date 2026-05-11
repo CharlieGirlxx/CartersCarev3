@@ -1,0 +1,142 @@
+// Mobile optimization utilities for responsive behavior and touch interactions
+
+export const MOBILE_BREAKPOINT = 768; // md breakpoint
+export const TAP_TARGET_MIN = 44; // WCAG minimum tap target
+
+// Detect if user is on mobile device
+export const isMobileDevice = () => {
+  if (typeof window === 'undefined') return false;
+  return window.innerWidth < MOBILE_BREAKPOINT || /Mobile|Android|iPhone/i.test(navigator.userAgent);
+};
+
+// Detect touch capability
+export const isTouchDevice = () => {
+  if (typeof window === 'undefined') return false;
+  return (
+    (typeof window !== 'undefined' && window.ontouchstart !== undefined) ||
+    (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0)
+  );
+};
+
+// Format numbers for readability
+export const formatCompact = (num: number): string => {
+  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+  return num.toString();
+};
+
+// Debounce function for mobile scroll/resize events
+export const debounce = <T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): ((...args: Parameters<T>) => void) => {
+  let timeout: NodeJS.Timeout;
+  return function executedFunction(...args: Parameters<T>) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
+
+// Get safe viewport dimensions for mobile
+export const getViewportDimensions = () => {
+  if (typeof window === 'undefined') {
+    return { width: 0, height: 0, isMobile: false };
+  }
+
+  return {
+    width: Math.min(window.innerWidth, window.screen.width),
+    height: Math.min(window.innerHeight, window.screen.height),
+    isMobile: window.innerWidth < MOBILE_BREAKPOINT,
+  };
+};
+
+// Check if element is in viewport
+export const isElementInViewport = (el: HTMLElement): boolean => {
+  if (!el) return false;
+  const rect = el.getBoundingClientRect();
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+};
+
+// Safe keyboard dismissal for mobile
+export const dismissKeyboard = () => {
+  if (typeof document !== 'undefined') {
+    const activeElement = document.activeElement as HTMLInputElement;
+    if (activeElement && activeElement.blur) {
+      activeElement.blur();
+    }
+  }
+};
+
+// Get safe area insets (for notched phones, landscape, etc.)
+export const getSafeAreaInsets = () => {
+  if (typeof window === 'undefined') {
+    return { top: 0, right: 0, bottom: 0, left: 0 };
+  }
+
+  const root = document.documentElement;
+  return {
+    top: parseInt(getComputedStyle(root).getPropertyValue('--safe-area-inset-top')) || 0,
+    right: parseInt(getComputedStyle(root).getPropertyValue('--safe-area-inset-right')) || 0,
+    bottom: parseInt(getComputedStyle(root).getPropertyValue('--safe-area-inset-bottom')) || 0,
+    left: parseInt(getComputedStyle(root).getPropertyValue('--safe-area-inset-left')) || 0,
+  };
+};
+
+// CSS class for touch-optimized tap targets
+export const TOUCH_TARGET_CLASS = 'touch-target'; // 44x44 minimum
+
+// Utility to handle fast double-tap for zoom on mobile
+export const handleDoubleTap = (callback: () => void, delay: number = 300) => {
+  let lastTap = 0;
+  return (e: React.TouchEvent) => {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+    if (tapLength < delay && tapLength > 0) {
+      callback();
+    }
+    lastTap = currentTime;
+  };
+};
+
+// Report Web Vitals for mobile performance monitoring
+export type WebVitals = {
+  FCP: number; // First Contentful Paint
+  LCP: number; // Largest Contentful Paint
+  CLS: number; // Cumulative Layout Shift
+  FID: number; // First Input Delay
+  INP: number; // Interaction to Next Paint
+};
+
+export const reportWebVitals = async (): Promise<WebVitals | null> => {
+  if (typeof window === 'undefined') return null;
+  
+  try {
+    const vitals = {} as WebVitals;
+    
+    // Use PerformanceObserver if available
+    if ('PerformanceObserver' in window) {
+      // This is a simplified version - production would need full implementation
+      const perfObserver = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          console.log(`[v0] Performance metric: ${entry.name} = ${(entry as any).value}ms`);
+        }
+      });
+      
+      perfObserver.observe({ entryTypes: ['paint', 'largest-contentful-paint', 'layout-shift', 'first-input'] });
+    }
+    
+    return vitals;
+  } catch (error) {
+    console.error('[v0] Error reporting web vitals:', error);
+    return null;
+  }
+};
